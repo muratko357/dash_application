@@ -1,4 +1,4 @@
-# Import required libraries
+# Libraries
 import pandas as pd
 import dash
 import dash_html_components as html
@@ -15,7 +15,7 @@ app = dash.Dash(__name__)
 # Clear the layout and do not display exception till callback gets executed
 app.config.suppress_callback_exceptions = True
 
-# Read the airline data into pandas dataframe
+# Read the airline data
 airline_data =  pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-DV0101EN-SkillsNetwork/Data%20Files/airline_data.csv', 
                             encoding = "ISO-8859-1",
                             dtype={'Div1Airport': str, 'Div1TailNum': str, 
@@ -25,17 +25,7 @@ airline_data =  pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.
 # List of years 
 year_list = [i for i in range(2005, 2021, 1)]
 
-"""Compute graph data for creating yearly airline performance report 
-
-Function that takes airline data as input and create 5 dataframes based on the grouping condition to be used for plottling charts and grphs.
-
-Argument:
-     
-    df: Filtered dataframe
-    
-Returns:
-   Dataframes to create graph. 
-"""
+# Compute graph data for yearly airline performance report
 def compute_data_choice_1(df):
     # Cancellation Category Count
     bar_data = df.groupby(['Month','CancellationCode'])['Flights'].sum().reset_index()
@@ -50,16 +40,7 @@ def compute_data_choice_1(df):
     return bar_data, line_data, div_data, map_data, tree_data
 
 
-"""Compute graph data for creating yearly airline delay report
-
-This function takes in airline data and selected year as an input and performs computation for creating charts and plots.
-
-Arguments:
-    df: Input airline data.
-    
-Returns:
-    Computed average dataframes for carrier delay, weather delay, NAS delay, security delay, and late aircraft delay.
-"""
+# Compute graph data for yearly airline delay report
 def compute_data_choice_2(df):
     # Compute delay averages
     avg_car = df.groupby(['Month','Reporting_Airline'])['CarrierDelay'].mean().reset_index()
@@ -78,9 +59,9 @@ app.layout = html.Div(children=[ html.H1(
                                 # Dropdown creation
                                 # Create an outer division 
                                 html.Div([
-                                    # Add an division
+                                    # Add a division
                                     html.Div([
-                                        # Create an division for adding dropdown helper text for report type
+                                        # Create a division for adding dropdown helper text for report type
                                         html.Div(
                                             [
                                             html.H2('Report Type:', style={'margin-right': '2em'}),
@@ -100,7 +81,7 @@ app.layout = html.Div(children=[ html.H1(
                                     
                                    # Add next division 
                                    html.Div([
-                                       # Create an division for adding dropdown helper text for choosing year
+                                       # Create a division for adding dropdown helper text for choosing year
                                         html.Div(
                                             [
                                             html.H2('Choose Year:', style={'margin-right': '2em'})
@@ -132,8 +113,6 @@ app.layout = html.Div(children=[ html.H1(
                                 ])
 
 # Callback function definition
-# TASK4: Add 5 ouput components
-# Enter your code below. Make sure you have correct formatting.
 @app.callback( [Output(component_id='plot1', component_property='children'),
                 Output(component_id='plot2', component_property='children'),
                 Output(component_id='plot3', component_property='children'),
@@ -147,6 +126,7 @@ app.layout = html.Div(children=[ html.H1(
                 State("plot3", "children"), State("plot4", "children"),
                 State("plot5", "children")
                ])
+
 # Add computation to callback function and return graph
 def get_graph(chart, year, children1, children2, c3, c4, c5):
       
@@ -190,8 +170,7 @@ def get_graph(chart, year, children1, children2, c3, c4, c5):
                     dcc.Graph(figure=bar_fig),
                     dcc.Graph(figure=line_fig)
                    ]
-        else:
-            # This covers chart type 2 and we have completed this exercise under Flight Delay Time Statistics Dashboard section
+        else: 
             # Compute required information for creating graph from the data
             avg_car, avg_weather, avg_NAS, avg_sec, avg_late = compute_data_choice_2(df)
             
